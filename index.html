@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Finanças</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="main-login-container" id="loginContainer">
+
+    <div class="login-left-panel">
+      <h1>Faça login</h1>
+      <p>E entre para o nosso time</p>
+      <img src="IMG/dinheiro.png" alt="Finanças"
+        class="left-panel-image">
+    </div>
+
+    <div class="login-right-panel">
+      <div class="login-card">
+        <h2 id="loginTitle">LOGIN</h2>
+        <div class="form-group" id="nomeCadastroGroup" style="display:none;">
+          <label for="nomeCadastro">NOME COMPLETO</label>
+          <input type="text" id="nomeCadastro" placeholder="Seu nome">
+        </div>
+        <div class="form-group" id="fotoPerfilGroup" style="display:none;">
+          <label for="fotoPerfil" class="custom-file-upload">
+            <i class="fas fa-camera"></i> Escolher Foto de Perfil
+          </label>
+          <input type="file" id="fotoPerfil" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label for="email">E-MAIL</label>
+          <input type="email" id="email" placeholder="Digite seu e-mail">
+        </div>
+        <div class="form-group">
+          <label for="senha">SENHA</label>
+          <input type="password" id="senha" placeholder="Digite sua senha">
+        </div>
+        <p id="loginMsg" class="feedback-msg"></p>
+        <button id="authButton" class="btn-login" onclick="login()">LOGIN</button>
+        <div class="login-links">
+          <a href="#" onclick="alternarCadastro()">Não tem conta? Crie uma</a>
+          <a href="#" onclick="abrirResetSenha()">Esqueceu sua senha?</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="reset-container" id="resetContainer" style="display:none;">
+    <div class="reset-box">
+      <h2>Redefinir Senha</h2>
+      <input type="email" id="resetEmail" placeholder="Digite seu e-mail cadastrado">
+      <input type="password" id="novaSenha" placeholder="Nova senha" style="display:none;">
+      <button id="verificarEmailBtn" onclick="verificarEmail()">Verificar</button>
+      <button id="salvarNovaSenhaBtn" onclick="salvarNovaSenha()" style="display:none;">Salvar Nova Senha</button>
+      <p id="resetMsg"></p>
+      <p><a href="#" onclick="fecharResetSenha()">Voltar ao login</a></p>
+    </div>
+  </div>
+
+  <div id="app" style="display:none;">
+    <header class="topbar">
+      <div class="user-info" onclick="abrirModalPerfil()" title="Editar Perfil">
+        <img id="fotoUsuario" src="" alt="Foto de Perfil">
+        <div>
+          <h1 id="nomeUsuario">Usuário</h1>
+          <span id="userEmail"></span>
+        </div>
+      </div>
+      <div class="controls">
+        <label class="dark-toggle">
+          <input type="checkbox" id="darkModeToggle">
+          <span class="slider"></span>
+        </label>
+        <button id="logoutBtn" onclick="logout()">Sair</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="card">
+        <h2>Salário</h2>
+        <input type="number" id="salarioInput" placeholder="Digite seu salário">
+      </section>
+
+      <section class="card">
+        <h2>Gastos Fixos</h2>
+        <div id="listaFixos"></div>
+        <div class="adicionar-item">
+          <input type="text" id="nomeFixo" placeholder="Nome do gasto fixo">
+          <input type="text" id="logoFixo" placeholder="URL do logo (opcional)">
+          <input type="number" id="valorFixo" placeholder="Valor">
+          <button id="addFixo" class="btn blue">Adicionar</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Gastos Variáveis</h2>
+        <div id="listaVariaveis"></div>
+        <div class="adicionar-item">
+          <input type="text" id="descVariavel" placeholder="Descrição do gasto">
+          <input type="number" id="valorVariavel" placeholder="Valor do gasto">
+          <button id="addVariavel" class="btn blue">Adicionar</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Resumo Mensal</h2>
+        <div class="resumo-grid">
+          <div>
+            <h3>Fixos</h3>
+            <p class="valor" id="totalFixos">R$ 0,00</p>
+          </div>
+          <div>
+            <h3>Variáveis</h3>
+            <p class="valor" id="totalVariaveis">R$ 0,00</p>
+          </div>
+          <div>
+            <h3>Saldo</h3>
+            <p class="valor saldo" id="saldoAtual">R$ 0,00</p>
+          </div>
+        </div>
+        <button id="salvarMes" class="btn green">Salvar Mês</button>
+      </section>
+
+      <section class="card">
+        <h2>Planejamento</h2>
+        <input type="number" id="metaEconomia" placeholder="Meta de economia">
+        <p id="statusMeta"></p>
+      </section>
+
+      <section class="card">
+        <h2>Histórico Mensal</h2>
+        <ul id="listaHistorico"></ul>
+      </section>
+
+      <section class="card chart">
+        <h2>Distribuição de Gastos</h2>
+        <canvas id="graficoGastos"></canvas>
+      </section>
+
+      <section class="card chart">
+        <h2>Evolução Mensal</h2>
+        <canvas id="graficoEvolucao"></canvas>
+      </section>
+    </main>
+  </div>
+
+  <div id="profileModal" class="modal-container" style="display:none;">
+    <div class="modal-box">
+      <span class="close-btn" onclick="fecharModalPerfil()">&times;</span>
+      <h2>Editar Perfil</h2>
+
+      <div class="form-group">
+        <label for="fotoPerfilModal"><i class="fas fa-camera"></i> Alterar Foto de Perfil</label>
+        <input type="file" id="fotoPerfilModal" accept="image/*">
+      </div>
+
+      <div class="form-group">
+        <label for="nomeUsuarioModal"><i class="fas fa-user"></i> Nome de Usuário</label>
+        <input type="text" id="nomeUsuarioModal" placeholder="Seu nome">
+      </div>
+
+      <div class="form-group">
+        <label for="emailUsuarioModal"><i class="fas fa-envelope"></i> E-mail</label>
+        <input type="email" id="emailUsuarioModal" placeholder="Seu e-mail">
+      </div>
+
+      <div class="form-group">
+        <label for="senhaAtualModal"><i class="fas fa-lock"></i> Senha Atual (para confirmar)</label>
+        <input type="password" id="senhaAtualModal" placeholder="Senha atual">
+      </div>
+
+      <div class="form-group">
+        <label for="novaSenhaModal"><i class="fas fa-key"></i> Nova Senha (opcional)</label>
+        <input type="password" id="novaSenhaModal" placeholder="Deixe em branco se não quiser mudar">
+      </div>
+
+      <p id="profileMsg"></p>
+      <button id="saveProfileBtn" class="btn green">Salvar Alterações</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
